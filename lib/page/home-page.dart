@@ -156,9 +156,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text("C")),
             ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    getOperacion();
-                  });
+                  getOperacion();
                 },
                 child: Text("=")),
             ElevatedButton(
@@ -175,24 +173,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   getOperacion() {
-    var array = operaciones.split(" ");
-    double resultado;
-    String operador = array[1].trim();
-    double x = double.parse(array[0].trim());
-    double y = double.parse(array[2].trim());
+    try {
+      var array = operaciones.split(" ");
+      num resultado;
+      String operador = array[1].trim();
+      double x = double.parse(array[0].trim());
+      double y = double.parse(array[2].trim());
 
-    resultado = (operador == "+")
-        ? (x + y)
-        : (operador == "-")
-            ? (x - y)
-            : (operador == "x")
-                ? (x * y)
-                : (operador == "/")
-                    ? (x / y)
-                    : "Operación invalida";
+      resultado = (operador == "+")
+          ? (x + y)
+          : (operador == "-")
+              ? (x - y)
+              : (operador == "x")
+                  ? (x * y)
+                  : (operador == "/")
+                      ? (x / y)
+                      : "Operación invalida";
 
-    resultadoOperaciones =
-        "$resultadoOperaciones\n $x $operador $y = $resultado";
-    operaciones = "$resultado";
+      resultado = resultado % 1 == 0 ? resultado.round() : resultado;
+
+      setState(() {
+        resultadoOperaciones =
+            "$resultadoOperaciones\n $x $operador $y = $resultado";
+        operaciones = "$resultado";
+      });
+    } catch (e) {
+      setState(() {
+        operaciones += "\nExpresión malformada";
+      });
+    }
   }
 }
+
