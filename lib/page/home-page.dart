@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:tallercalculadora2/page/resultados.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String operaciones = "";
   String resultadoOperaciones = "";
+  List<Text> listaResultados = [];
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +31,23 @@ class _HomePageState extends State<HomePage> {
       children: [
         Expanded(
           child: Container(
-            child: Row(
-              children: [
-                Text(
-                  resultadoOperaciones,
-                  textAlign: TextAlign.justify,
+              color: Colors.yellow[100],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: listaResultados,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              )),
         ),
         Container(
-          color: Colors.blue,
+          color: Colors.green[200],
           height: 100,
           child: Row(
             children: [
@@ -187,6 +194,7 @@ class _HomePageState extends State<HomePage> {
                   setState(() {
                     operaciones = "";
                     resultadoOperaciones = "";
+                    listaResultados = [];
                   });
                 },
                 child: Text("C")),
@@ -202,6 +210,17 @@ class _HomePageState extends State<HomePage> {
                   });
                 },
                 child: Text("+"))
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ResultadosPage(
+                              listadoResultados: listaResultados)));
+                },
+                child: Text("Mostrar resultados de operaciones")),
           ])
         ])),
       ],
@@ -216,14 +235,17 @@ class _HomePageState extends State<HomePage> {
         if (operacion.contains(new RegExp(r'²|√|%'))) {
           resultado = validarOperacionesEspeciales(operacion);
           setState(() {
+            listaResultados.add(Text("$operacion = $resultado"));
             operacion = "$resultado";
             operaciones = operacion;
           });
+        } else {
+          setState(() {
+            listaResultados.add(Text("$operacion = $operacion"));
+            operaciones = operacion;
+            resultadoOperaciones = operacion;
+          });
         }
-        setState(() {
-          operaciones = operacion;
-          resultadoOperaciones = operacion;
-        });
       } else {
         var array = operacion.split(" ");
         String operador = array[1].trim();
@@ -245,6 +267,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           resultadoOperaciones =
               "$resultadoOperaciones\n $x $operador $y = $resultado";
+          listaResultados.add(Text("$operacion = $resultado"));
           operaciones = "$resultado";
         });
 
@@ -287,4 +310,3 @@ class _HomePageState extends State<HomePage> {
     return double.parse(numeroCuadratico);
   }
 }
-
